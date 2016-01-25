@@ -67,7 +67,86 @@ public class Matriz {
         } 
         return matrizResultante; 
     }
-    
+
+public static Matriz invertir(Matriz m) throws DimensionesIncompatibles {
+		
+		int det=determinanteMatriz(m);
+		Matriz traspuesta = traspuesta(m);
+		
+		for(int i=0;i<traspuesta.getDimension().height;i++)
+		{
+			for(int j=0;j<traspuesta.getDimension().width;j++)
+			{
+				traspuesta.datos[i][j]=traspuesta.datos[i][j]/det;
+			}
+		}
+		
+		return traspuesta;
+		
+	}
+
+	public static Matriz traspuesta(Matriz m) {
+		int filasA, columnasA;
+		filasA = m.getDimension().height;
+		columnasA = m.getDimension().width;
+		Matriz matrizTraspuesta = new Matriz(filasA, columnasA, false);
+
+		for (int i = 0; i < filasA; i++) {
+			for (int j = 0; j < columnasA; j++) {
+				matrizTraspuesta.datos[j][i] = m.datos[i][j];
+			}
+		}
+		return matrizTraspuesta;
+	}
+
+	public static int determinanteMatriz(Matriz m) throws DimensionesIncompatibles {
+		int filas, columnas;
+		filas = m.getDimension().height;
+		columnas = m.getDimension().width;
+		if (filas != columnas) {
+			throw new DimensionesIncompatibles("La matriz debe ser cuadrada");
+		}
+		if (filas == 2) {
+			return (m.datos[0][0] * m.datos[1][1]) - (m.datos[0][1] * m.datos[1][0]);
+
+		}
+
+		int sum = 0;
+		for (int i = 0; i < columnas; i++) {
+			sum += signo(i) * m.datos[0][i] * determinanteMatriz(subMatriz(m, 0, i));
+		}
+		return sum;
+
+	}
+
+	public static Matriz subMatriz(Matriz m, int fila, int columna) {
+		int filas, columnas;
+		filas = m.getDimension().height;
+		columnas = m.getDimension().width;
+		Matriz mat = new Matriz(filas - 1, columnas - 1, false);
+		int r = -1;
+		for (int i = 0; i < filas; i++) {
+			if (i == fila)
+				continue;
+			r++;
+			int c = -1;
+			for (int j = 0; j < columnas; j++) {
+				if (j == columna)
+					continue;
+				mat.datos[r][++c] = mat.datos[i][j];
+			}
+		}
+		return mat;
+	}
+	
+	public static int signo(int n) {
+		if (n % 2 == 0) {
+			return -1;
+		}
+
+		return 1;
+
+	}
     @Override
     public String toString(){
         String ret = "";
